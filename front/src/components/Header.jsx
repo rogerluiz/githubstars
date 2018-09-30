@@ -1,17 +1,26 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 
 const Container = styled.header`
   top: 0;
   left: 0;
+  width: 100%;
   padding: 10px 20px;
   position: absolute;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
 `;
 
 const Title = styled.h1`
   font-size: 20px;
+  cursor: pointer;
+`;
+
+const NavLink = styled(Link)`
+  margin-left: auto;
 `;
 
 class Header extends Component {
@@ -24,15 +33,24 @@ class Header extends Component {
   }
 
   render() {
-    if (this.state.redirect) {
+    const { location } = this.props;
+
+    if (this.state.redirect && location.pathname !== '/') {
       return <Redirect push to="/"/>
     }
 
-    
+    if (location.pathname === '/') {
+      return (
+        <Container>
+          <Title onClick={this.onClickLink}>GithubStars</Title>
+        </Container>
+      );
+    }
 
     return (
       <Container>
         <Title onClick={this.onClickLink}>GithubStars</Title>
+        <NavLink to="/">home</NavLink>
       </Container>
     );
   }

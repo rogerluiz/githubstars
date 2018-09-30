@@ -45,7 +45,6 @@ const ButtonPrimary = styled(Button)`
   }
 `;
 
-// Getting the repositories list from Github...
 
 class Search extends Component {
   state = {
@@ -73,8 +72,8 @@ class Search extends Component {
 
   render() {
     const {
-      clickButton,
-      newValue
+      match,
+      location
     } = this.props;
 
     const { inputValue, isLoading } = this.state;
@@ -82,11 +81,12 @@ class Search extends Component {
     if (isLoading) {
       return (
         <Container>
-          <Header />
+          <Header match={match} />
 
           <Painel>
             <TableItems>
               <LoaderBar />
+              <p>Getting the repositories list from Github...</p>
             </TableItems>
           </Painel>
         </Container>
@@ -95,7 +95,7 @@ class Search extends Component {
 
     return (
       <Container>
-        <Header />
+        <Header match={match} location={location} />
 
         <Painel>
           <TableItems>

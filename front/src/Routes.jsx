@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import Search from './containers/Search';
 import NotFound from './containers/NotFound';
+import Repositories from './containers/Repositories';
 
 import { createStore } from 'redux';
 import { Reducers } from './reducers';
@@ -19,8 +20,8 @@ class Routes extends Component {
       <Provider store={Store}>
         <Router>
           <Switch>
-            <Route exact path="/" component={Search} page="oi" />
-          
+            <Route exact path="/" component={Search} />
+            <Route path="/repositories" component={Repositories} />
             <Route component={NotFound} />
           </Switch>
         </Router>
