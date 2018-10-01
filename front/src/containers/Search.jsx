@@ -30,6 +30,10 @@ const TableItems = styled.div`
   margin-bottom: 20px;
 `;
 
+const TableColumn = styled(TableItems)`
+  flex-direction: column;
+`;
+
 const Label = styled.p``;
 
 const ButtonPrimary = styled(Button)`
@@ -45,6 +49,10 @@ const ButtonPrimary = styled(Button)`
   }
 `;
 
+const LoaderText = styled.p`
+  margin-top: 20px;
+  font-size: 14px;
+`;
 
 class Search extends Component {
   state = {
@@ -81,13 +89,13 @@ class Search extends Component {
     if (isLoading) {
       return (
         <Container>
-          <Header match={match} />
+          <Header match={match} location={location} />
 
           <Painel>
-            <TableItems>
+            <TableColumn>
               <LoaderBar />
-              <p>Getting the repositories list from Github...</p>
-            </TableItems>
+              <LoaderText>Getting the repositories list from Github...</LoaderText>
+            </TableColumn>
           </Painel>
         </Container>
       );

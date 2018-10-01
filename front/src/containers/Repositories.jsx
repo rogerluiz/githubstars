@@ -18,13 +18,6 @@ const Container = styled.div`
 `;
 
 
-const TableItems = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
-`;
-
 const Content = styled.div`
   width: 100%;
   padding: 0 20px;
@@ -32,39 +25,69 @@ const Content = styled.div`
 
 const SearchBar = styled.div``;
 
-const BorderBox = styled.div`
-  background-color: rgb(255, 255, 255);
-  border-width: 1px;
-  border-style: solid;
-  border-image: initial;
-  border-color: rgb(225, 228, 232);
-  border-radius: 3px;
-  padding: 10px;
-  margin-top: 20px;
+// const BorderBox = styled.div`
+//   background-color: rgb(255, 255, 255);
+//   border-width: 1px;
+//   border-style: solid;
+//   border-image: initial;
+//   border-color: rgb(225, 228, 232);
+//   border-radius: 3px;
+//   margin-top: 20px;
+//   width: 100%;
+// `;
+
+const Table = styled.table`
   width: 100%;
+  overflow: auto;
+  border-spacing: 0;
+  border-collapse: collapse;
+  margin-top: 20px;
+  margin-bottom: 16px;
 `;
 
-const Table = styled.div``;
+const TableItem = styled.td`
+  font-size: 14px;
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+  text-align: left;
+`;
 
-const TableHead = styled.div``;
+const TableHeadItem = styled.th`
+  font-size: 14px;
+  font-weight: 600;
+  padding: 6px 13px;
+  text-align: left;
+  border: 1px solid #dfe2e5;
 
-const TableItem = styled.div``;
+  &:nth-child(2) {
+    width: 100%;
+  }
+`;
 
-const TableItemRow = styled.div``;
+const TableRow = styled.tr`
+  border-bottom: 1px solid #ddd;
 
-// repository
-// description
-// language
-// tags
+  &:nth-child(odd) {
+    background-color: #f8f8f8;
+  }
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+`;
+// 
+const TableHead = styled.thead`
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+
+  ${TableRow} {
+    background-color: #c8cbce;
+  }
+`;
 
 class Search extends Component {
   state = {
     inputValue: ''
-  }
-
-  constructor(props) {
-    super(props);
-
   }
 
   inputChange = event => {
@@ -81,6 +104,7 @@ class Search extends Component {
 
     const { inputValue } = this.state;
 
+    console.log(inputValue);
 
     return (
       <Container>
@@ -91,9 +115,33 @@ class Search extends Component {
             <Input />
           </SearchBar>
 
-          <BorderBox>
-            oi
-          </BorderBox>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeadItem>Repository</TableHeadItem>
+                <TableHeadItem>Description</TableHeadItem>
+                <TableHeadItem>Language</TableHeadItem>
+                <TableHeadItem>Tags</TableHeadItem>
+                <TableHeadItem></TableHeadItem>
+              </TableRow>
+            </TableHead>
+
+            <TableRow>
+              <TableItem></TableItem>
+              <TableItem></TableItem>
+              <TableItem></TableItem>
+              <TableItem></TableItem>
+              <TableItem>editar</TableItem>
+            </TableRow>
+
+            <TableRow>
+              <TableItem></TableItem>
+              <TableItem></TableItem>
+              <TableItem></TableItem>
+              <TableItem></TableItem>
+              <TableItem>editar</TableItem>
+            </TableRow>
+          </Table>
         </Content>
       </Container>
     );
