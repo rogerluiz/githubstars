@@ -9,7 +9,7 @@ const GITHUB_API = 'https://api.github.com/users';
 
 export default (app) => {
   app.get('/api', (req, res) => {
-    const username = 'rogerluiz';// req.body.username
+    const username = req.query.username;
 
     const options = {
       params: {
@@ -23,8 +23,17 @@ export default (app) => {
 
     axios.get(`${GITHUB_API}/${username}/starred`, options)
       .then((response) => {
-        res.json(response.data);
-        res.statusCode(204);
+        const filtered = response.data.map((item, k) => {
+          return {
+            id: item.repo.id,
+            description: item.repo.description,
+            url: item.repo.git_url,
+            language: item.repo.language,
+            name: item.repo.name
+          };
+        });
+        res.json(filtered);
+        // req.statusCode(204);
       })
       .catch((error) => {
         console.log(error);

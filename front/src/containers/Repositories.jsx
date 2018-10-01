@@ -116,13 +116,11 @@ class Search extends Component {
       headerNames,
     } = this.state;
     
-    const headerItems = headerNames.map((item) => {
+    const headerItems = headerNames.map((item, key) => {
       return (
-        <TableHeadItem>{item}</TableHeadItem>
+        <TableHeadItem key={key}>{item}</TableHeadItem>
       );
     });
-
-    console.log(inputValue);
 
     return (
       <Container>
@@ -140,15 +138,17 @@ class Search extends Component {
               </TableRow>
             </TableHead>
 
-            <TableRow>
-              <TableItem></TableItem>
-              <TableItem></TableItem>
-              <TableItem></TableItem>
-              <TableItem></TableItem>
-              <TableItem>
-                <ButtonLink onClick={this.onToggleModal}>editar</ButtonLink>
-              </TableItem>
-            </TableRow>
+            <tbody>
+              <TableRow>
+                <TableItem></TableItem>
+                <TableItem></TableItem>
+                <TableItem></TableItem>
+                <TableItem></TableItem>
+                <TableItem>
+                  <ButtonLink onClick={this.onToggleModal}>editar</ButtonLink>
+                </TableItem>
+              </TableRow>
+            </tbody>
           </Table>
         </Content>
 

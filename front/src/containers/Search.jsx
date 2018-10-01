@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import styled from 'styled-components';
+import axios from 'axios';
+
 // import { connect } from 'react-redux';
 // import { bindActionCreators } from 'redux';
 
@@ -45,7 +48,8 @@ const LoaderText = styled.p`
 class Search extends Component {
   state = {
     inputValue: '',
-    isLoading: false
+    isLoading: false,
+    redirect: false
   }
 
   constructor(props) {
@@ -61,20 +65,43 @@ class Search extends Component {
   }
 
   getRepositories() {
+    const options = {
+      params: {
+        username: this.state.inputValue
+      }
+    };
+
     this.setState({
       isLoading: true
     });
+
+    axios.get('http://localhost:3001/api', options)
+      .then((response) => {
+        console.log(response.data);
+
+        // this.setState({
+        //   isLoading: false,
+        //   redirect: true
+        // });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   render() {
     const {
       match,
-      location
+      location,
     } = this.props;
 
-    const { inputValue, isLoading } = this.state;
+    const {
+      inputValue,
+      isLoading,
+      redirect
+    } = this.state;
 
-    if (isLoading) {
+    if (isLoading && !redirect) {
       return (
         <Container>
           <Header match={match} location={location} />
@@ -87,6 +114,10 @@ class Search extends Component {
           </Painel>
         </Container>
       );
+    }
+
+    if (redirect) {
+      return <Redirect push to="/repositories"/>
     }
 
     return (
