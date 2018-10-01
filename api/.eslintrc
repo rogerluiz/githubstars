@@ -1,0 +1,30 @@
+{
+  "extends": "airbnb",
+  "rules": {
+    "semi": 2,
+    "object-shorthand": 0,
+    "arrow-parens": 0,
+    "no-useless-constructor": 0,
+    "import/extensions": 0,
+    "import/no-unresolved": 0,
+    "react/prefer-stateless-function": 0,
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "import/no-extraneous-dependencies": [
+      "error", {
+        "devDependencies": true
+      }
+    ]
+  },
+  "globals": {
+    "request": true,
+    "beforeEach": true,
+    "td": true,
+    "app": true,
+    "it": true,
+    "document": true,
+    "instanceOf": true,
+    "decodeURIComponent": true,
+    "File": true,
+    "FormData": true
+  }
+}
