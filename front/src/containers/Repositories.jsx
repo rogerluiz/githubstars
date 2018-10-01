@@ -7,6 +7,7 @@ import styled from 'styled-components';
 
 import Input from '../components/Input';
 import Header from '../components/Header';
+import Modal from '../components/Modal';
 
 const Container = styled.div`
   width: 100%;
@@ -17,24 +18,12 @@ const Container = styled.div`
   padding-top: 70px;
 `;
 
-
 const Content = styled.div`
   width: 100%;
   padding: 0 20px;
 `;
 
 const SearchBar = styled.div``;
-
-// const BorderBox = styled.div`
-//   background-color: rgb(255, 255, 255);
-//   border-width: 1px;
-//   border-style: solid;
-//   border-image: initial;
-//   border-color: rgb(225, 228, 232);
-//   border-radius: 3px;
-//   margin-top: 20px;
-//   width: 100%;
-// `;
 
 const Table = styled.table`
   width: 100%;
@@ -85,14 +74,33 @@ const TableHead = styled.thead`
   }
 `;
 
+const ButtonLink = styled.a`
+  color: rgb(3, 102, 214);
+  margin-bottom: 4px;
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 class Search extends Component {
   state = {
-    inputValue: ''
+    inputValue: '',
+    openModal: false,
+    headerNames: ['Repository', 'Description', 'Language', 'Tags', ''],
   }
 
   inputChange = event => {
     this.setState({
       inputValue: event.target.value
+    });
+  }
+
+  onToggleModal = () => {
+    this.setState({
+      openModal: !this.state.openModal
     });
   }
 
@@ -102,7 +110,17 @@ class Search extends Component {
       location
     } = this.props;
 
-    const { inputValue } = this.state;
+    const {
+      inputValue,
+      openModal,
+      headerNames,
+    } = this.state;
+    
+    const headerItems = headerNames.map((item) => {
+      return (
+        <TableHeadItem>{item}</TableHeadItem>
+      );
+    });
 
     console.log(inputValue);
 
@@ -118,11 +136,7 @@ class Search extends Component {
           <Table>
             <TableHead>
               <TableRow>
-                <TableHeadItem>Repository</TableHeadItem>
-                <TableHeadItem>Description</TableHeadItem>
-                <TableHeadItem>Language</TableHeadItem>
-                <TableHeadItem>Tags</TableHeadItem>
-                <TableHeadItem></TableHeadItem>
+                {headerItems}
               </TableRow>
             </TableHead>
 
@@ -131,18 +145,14 @@ class Search extends Component {
               <TableItem></TableItem>
               <TableItem></TableItem>
               <TableItem></TableItem>
-              <TableItem>editar</TableItem>
-            </TableRow>
-
-            <TableRow>
-              <TableItem></TableItem>
-              <TableItem></TableItem>
-              <TableItem></TableItem>
-              <TableItem></TableItem>
-              <TableItem>editar</TableItem>
+              <TableItem>
+                <ButtonLink onClick={this.onToggleModal}>editar</ButtonLink>
+              </TableItem>
             </TableRow>
           </Table>
         </Content>
+
+        {openModal ? <Modal onCloseModal={this.onToggleModal} /> : ''}
       </Container>
     );
   }

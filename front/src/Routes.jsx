@@ -9,9 +9,6 @@ import Repositories from './containers/Repositories';
 import { createStore } from 'redux';
 import { Reducers } from './reducers';
 
-
-
-
 class Routes extends Component {
   render() {
     const Store = createStore(Reducers);
