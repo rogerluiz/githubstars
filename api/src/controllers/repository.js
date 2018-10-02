@@ -18,38 +18,46 @@ class RepositoryController {
   }
 
   async create(req, res, next) {
-    const data = await getRepositories(CLIENT_ID, CLIENT_SECRET, `${GITHUB_API}/${req.query.username}/starred`);
-    
-    // Repository.findOne({ name: req.query.username })
-    //   .then((err, repositories) => {
-    //     console.log(err, repositories);
-    //     if (name) {
-    //       if (repositories.name === req.query.username) {
-    //         return true;
-    //       } else {
-    //         return false;
-    //       }
-    //     } else {
-    //       next(err);
-    //     }
-    //   });
+    console.log(req.query.username);
 
+    try {
+      const data = await getRepositories(CLIENT_ID, CLIENT_SECRET, `${GITHUB_API}/${req.query.username}/starred`);
+      
+      // Repository.findOne({ name: req.query.username })
+      //   .then((err, repositories) => {
+      //     console.log(err, repositories);
+      //     if (name) {
+      //       if (repositories.name === req.query.username) {
+      //         return true;
+      //       } else {
+      //         return false;
+      //       }
+      //     }
+      //   });
+  
+  
+      // res.send({
+      //   data: data,
+      //   statusCode: HttpStatus.OK,
+      // });
+      // const repository = new Repository({
+      //   name: req.query.username
+      // });
 
-    res.send({
-      data: data,
-      statusCode: HttpStatus.OK,
-    });
-    // const repository = new Repository({
-    //   name: req.query.username
-    // });
+      const repository = new Repository();
+  
+      // data.forEach(repo => {
+      //   repository.repositories.push(repo);
+      // });
+  
+      // repository.save()
+      //   .then(saved => res.json(saved))
+      //   .catch(e => next(e));
 
-    // data.forEach(repo => {
-    //   repository.repositories.push(repo);
-    // });
-
-    // repository.save()
-    //   .then(saved => res.json(saved))
-    //   .catch(e => next(e));
+    }
+    catch(e) {
+      next(e);
+    }
   }
 
   
