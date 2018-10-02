@@ -1,32 +1,34 @@
 import httpStatus from 'http-status';
-
 import mongoose from '../config/datasource';
 
 const RepositorySchema = mongoose.Schema({
-  repoId: {
-    type: Number,
-    required: true
-  },
   name: {
     type: String,
     required: true
   },
-  description: {
-    type: String,
-    required: true
-  },
-  url: {
-    type: String,
-    required: true
-  },
-  languages: {
-    type: String,
-    required: true
-  },
-  tags: {
-    type: String,
-    default: ''
-  }
+  repositories: [
+    {
+      id: {
+        type: Number
+      },
+      name: {
+        type: String
+      },
+      description: {
+        type: String
+      },
+      url: {
+        type: String
+      },
+      language: {
+        type: String
+      },
+      tags: {
+        type: String,
+        default: ''
+      }
+    }
+  ]
 });
 
 

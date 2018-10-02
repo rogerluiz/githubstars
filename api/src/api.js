@@ -1,19 +1,12 @@
 import HttpStatus from 'http-status';
+import RepositoryController from './controllers/repository';
 
 export default (app) => {
-  app.get('/api', (req, res) => {
-    res.send({
-      data: true,
-      statusCode: HttpStatus.OK,
-    });
-  });
+  const repository = new RepositoryController();
 
-  app.get('/api/repositories', (req, res) => {
-    res.send({
-      data: true,
-      statusCode: HttpStatus.OK,
-    });
-  });
+  app.get('/api', repository.create);
+
+  app.get('/api/repositories', repository.get);
 
   app.get('/api/search', (req, res) => {
     res.send({

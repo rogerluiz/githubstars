@@ -7,7 +7,7 @@ import Api from './src/api';
 const app = express();
 
 app.set('trust proxy', 1);
-app.set('port', process.env.PORT || 3001);
+app.set('port', process.env.PORT || 4000);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
