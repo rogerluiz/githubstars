@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import HttpStatus from 'http-status';
+import { ObjectId } from 'mongo';
 
 import Repository from '../models/repository';
 import { getRepositories } from '../helpers/helper';
@@ -22,49 +23,47 @@ class RepositoryController {
 
     try {
       const data = await getRepositories(CLIENT_ID, CLIENT_SECRET, `${GITHUB_API}/${req.query.username}/starred`);
-      
-      // Repository.findOne({ name: req.query.username })
-      //   .then((err, repositories) => {
-      //     console.log(err, repositories);
-      //     if (name) {
-      //       if (repositories.name === req.query.username) {
-      //         return true;
-      //       } else {
-      //         return false;
-      //       }
-      //     }
-      //   });
-  
-  
-      // res.send({
-      //   data: data,
-      //   statusCode: HttpStatus.OK,
-      // });
-      // const repository = new Repository({
-      //   name: req.query.username
-      // });
 
-      const repository = new Repository();
-  
-      // data.forEach(repo => {
-      //   repository.repositories.push(repo);
-      // });
-  
-      // repository.save()
-      //   .then(saved => res.json(saved))
-      //   .catch(e => next(e));
-
+      Repository.update({
+          name: req.query.username
+        }, {
+          name: req.query.username,
+          repositories: [...data]
+        }, {
+          upsert: true,
+          returnNewDocument: true
+        })
+        .then((result) => {
+          res.json(result);
+        })
+        .catch(e => next(e));
     }
     catch(e) {
       next(e);
     }
   }
 
-  
+  delete(req, res, next) {
+    const id = req.query.id;
 
-  delete(req, res, next) {}
+    Repository.deleteOne({ '_id': ObjectId(id) })
+      .then(result => res.json(result))
+      .catch(e => next(e));
+  }
 
-  update(req, res, next) {}
+  update(req, res, next) {
+    const id = req.query.id;
+    // Repository.updateOne({
+    //   name: req.query.username
+    // }, {
+    //   name: req.query.username,
+    //   repositories: [...data]
+    // })
+    // .then((result) => {
+    //   res.json(result);
+    // })
+    // .catch(e => next(e));
+  }
 }
 
 export default RepositoryController;
