@@ -9,17 +9,15 @@ export default (app) => {
     .post('/api', repository.create);
 
 
-  app.post('/api/search', (req, res) => {
-    res.send({
-      data: true,
-      statusCode: HttpStatus.OK,
-    });
-  });
+  app
+    .post('/api/search', repository.search);
 
-  app.post('/api/tag', (req, res) => {
-    res.send({
-      data: true,
-      statusCode: HttpStatus.OK,
+  app
+    .get('/api/tag', repository.tag)
+    .post('/api/tag', (req, res) => {
+      res.send({
+        data: true,
+        statusCode: HttpStatus.OK,
+      });
     });
-  });
 };

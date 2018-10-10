@@ -31,5 +31,7 @@ const RepositorySchema = mongoose.Schema({
   ]
 });
 
+RepositorySchema.index({ name: "text" });
+
 
 export default mongoose.model('Repository', RepositorySchema);
