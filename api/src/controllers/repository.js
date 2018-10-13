@@ -15,33 +15,33 @@ const GITHUB_API = 'https://api.github.com/users';
 class RepositoryController {
   get(req, res, next) {
     Repository.findOne({ name: req.query.username })
-    .then(result => res.status(HttpStatus.OK).json(result))
-    .catch(e => {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR);
-      next(e);
-    });
+      .then(result => res.status(HttpStatus.OK).json(result))
+      .catch(e => {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+        next(e);
+      });
   }
 
   async create(req, res, next) {
     try {
-      const data = await getRepositories(CLIENT_ID, CLIENT_SECRET, `${GITHUB_API}/${req.query.username}/starred`);
       const username = req.body.username;
+      const data = await getRepositories(CLIENT_ID, CLIENT_SECRET, `${GITHUB_API}/${username}/starred`);
+
       Repository.update({
-          name: username
-        }, {
-          name: username,
-          repositories: [...data]
-        }, {
-          upsert: true,
-          returnNewDocument: true
-        })
+        name: username,
+      }, {
+        name: username,
+        repositories: [...data],
+      }, {
+        upsert: true,
+        returnNewDocument: true,
+      })
         .then(result => res.status(HttpStatus.OK).json(result))
         .catch(e => {
           res.status(HttpStatus.INTERNAL_SERVER_ERROR);
           next(e);
         });
-    }
-    catch(e) {
+    } catch (e) {
       next(e);
     }
   }
@@ -49,7 +49,7 @@ class RepositoryController {
   delete(req, res, next) {
     const id = req.query.id;
 
-    Repository.deleteOne({ '_id': id })
+    Repository.deleteOne({ _id: id })
       .then(result => res.status(HttpStatus.OK).json(result))
       .catch(e => {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -61,34 +61,39 @@ class RepositoryController {
     const id = req.body.id;
 
     res.status(HttpStatus.OK).json({
-      id: id
-    })
+      id: id,
+    });
+
+    next();
+  }
+
+  updateTag(req, res, next) {
+    const id = req.body.id;
+    
+    res.status(HttpStatus.OK).json(id);
+
+    // Repository.updateOne({
+    //   name: req.body.username,
+    // }, {
+    //   name: req.query.username,
+    //   repositories: [...data],
+    // })
+    //   .then((result) => {
+    //     res.status(HttpStatus.OK).json(result);
+    //   })
+    //   .catch(e => next(e));
   }
 
   search(req, res, next) {
     Repository.find({
-      'repositories': { $elemMatch: { 'description': new RegExp(req.body.search) } },
+      name: req.body.username,
+      repositories: { $elemMatch: { tag: new RegExp(req.body.search) } },
     }, { 'repositories.$': 1 })
-    // .populate('name repositories')
-    .then(result => res.status(HttpStatus.OK).json(result))
-    .catch(e => {
-      res.status(HttpStatus.INTERNAL_SERVER_ERROR);
-      next(e);
-    });
-  }
-
-  update(req, res, next) {
-    const id = req.body.id;
-    // Repository.updateOne({
-    //   name: req.query.username
-    // }, {
-    //   name: req.query.username,
-    //   repositories: [...data]
-    // })
-    // .then((result) => {
-    //   res.json(result);
-    // })
-    // .catch(e => next(e));
+      .then(result => res.status(HttpStatus.OK).json(result))
+      .catch(e => {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR);
+        next(e);
+      });
   }
 }
 

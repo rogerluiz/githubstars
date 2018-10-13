@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-// import { connect } from 'react-redux';
+import axios from 'axios';
+import { connect } from 'react-redux';
 // import { bindActionCreators } from 'redux';
 
 // import  { clickButton } from '../actions';
@@ -23,7 +24,11 @@ const Content = styled.div`
   padding: 0 20px;
 `;
 
-const SearchBar = styled.div``;
+const SearchBar = styled.div`
+  width: 300px;
+
+
+`;
 
 const Table = styled.table`
   width: 100%;
@@ -85,10 +90,16 @@ const ButtonLink = styled.a`
   }
 `;
 
-class Search extends Component {
+const SearchInput = styled(Input)`
+   width: 100%;
+`;
+
+class Repositories extends Component {
   state = {
     inputValue: '',
     openModal: false,
+    // username: 'rafaelrinaldi',
+    repositories: [],
     headerNames: ['Repository', 'Description', 'Language', 'Tags', ''],
   }
 
@@ -99,9 +110,41 @@ class Search extends Component {
   }
 
   onToggleModal = () => {
+    
     this.setState({
       openModal: !this.state.openModal
     });
+  }
+
+  componentWillMount() {
+    const options = {
+      params: {
+        username: 'rogerluiz', //this.props.username
+      },
+    };
+
+    axios.get('http://localhost:4000/api', options)
+      .then((response) => {
+        this.setState({ repositories: response.data.repositories });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  searchByTag() {
+    const options = {
+      username: 'rogerluiz',
+      search: this.state.inputValue,
+    };
+
+    axios.post('http://localhost:4000/api/search', options)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   render() {
@@ -114,11 +157,26 @@ class Search extends Component {
       inputValue,
       openModal,
       headerNames,
+      repositories,
     } = this.state;
     
-    const headerItems = headerNames.map((item, key) => {
+    const HeaderItems = headerNames.map((item, key) => {
       return (
         <TableHeadItem key={key}>{item}</TableHeadItem>
+      );
+    });
+
+    const BodyItems = repositories.map((item, key) => {
+      return (
+        <TableRow key={key}>
+          <TableItem>{ item.name }</TableItem>
+          <TableItem>{ item.description }</TableItem>
+          <TableItem>{ item.language }</TableItem>
+          <TableItem>{ item.tags }</TableItem>
+          <TableItem>
+            <ButtonLink data-id={item._id} onClick={this.onToggleModal}>editar</ButtonLink>
+          </TableItem>
+        </TableRow>
       );
     });
 
@@ -128,43 +186,35 @@ class Search extends Component {
 
         <Content>
           <SearchBar>
-            <Input />
+            <SearchInput type='text' onChange={this.inputChange} value={inputValue} placeholder="Search by tag" />
           </SearchBar>
 
           <Table>
             <TableHead>
               <TableRow>
-                {headerItems}
+                {HeaderItems}
               </TableRow>
             </TableHead>
 
             <tbody>
-              <TableRow>
-                <TableItem></TableItem>
-                <TableItem></TableItem>
-                <TableItem></TableItem>
-                <TableItem></TableItem>
-                <TableItem>
-                  <ButtonLink onClick={this.onToggleModal}>editar</ButtonLink>
-                </TableItem>
-              </TableRow>
+              { BodyItems }
             </tbody>
           </Table>
         </Content>
 
-        {openModal ? <Modal onCloseModal={this.onToggleModal} /> : ''}
+        {openModal ? <Modal onCloseModal={this.onToggleModal} tagId={this.state.tagId} /> : ''}
       </Container>
     );
   }
 };
 
-export default Search;
+// export default Search;
 
-// const mapStateToProps = store => ({
-//   newValue: store.clickState.newValue
-// });
+const mapStateToProps = state => ({
+  username: state.usernameState.username,
+});
 
 // const mapDispatchToProps = dispatch =>
 //   bindActionCreators({ clickButton }, dispatch);
   
-// export default connect(mapStateToProps, mapDispatchToProps)(Search);
+export default connect(mapStateToProps)(Repositories);

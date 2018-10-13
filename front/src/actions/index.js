@@ -1,4 +1,4 @@
-export const clickButton = value => ({
-  type: 'CLICK_UPDATE_VALUE',
-  newValue: value
+export const updateUsername = value => ({
+  type: 'UPDATE_USERNAME',
+  username: value
 });

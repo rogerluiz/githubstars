@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 
 import Input from './Input';
 import Button from './Button';
@@ -63,6 +64,25 @@ const InputText = styled(Input)`
 `;
 
 class Modal extends Component {
+  constructor(props) {
+    super(props);
+
+    this.updateTag =  this.updateTag.bind(this);
+  }
+  updateTag() {
+    const options = {
+      id: this.props.id
+    };
+
+    axios.post('http://localhost:4000/api/tag', options)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
   render() {
     return (
       <Container>
@@ -73,7 +93,7 @@ class Modal extends Component {
           </Column>
           
           <Row>
-            <Button>Save</Button>
+            <Button onClick={this.updateTag}>Save</Button>
             <ButtonDanger onClick={this.props.onCloseModal}>Cancel</ButtonDanger>
           </Row>
         </Inner>

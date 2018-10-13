@@ -3,10 +3,10 @@ import { Redirect } from 'react-router-dom';
 import styled from 'styled-components';
 import axios from 'axios';
 
-// import { connect } from 'react-redux';
-// import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-// import  { clickButton } from '../actions';
+import  { updateUsername } from '../actions';
 
 import Input from '../components/Input';
 import Button from '../components/Button';
@@ -66,23 +66,22 @@ class Search extends Component {
 
   getRepositories() {
     const options = {
-      params: {
-        username: this.state.inputValue
-      }
+      username: this.state.inputValue,
     };
-
+  
     this.setState({
       isLoading: true
     });
 
-    axios.get('http://localhost:3001/api', options)
+    axios.post('http://localhost:4000/api', options)
       .then((response) => {
-        console.log(response.data);
+        // updateUsername(this.state.inputValue);
+        window.store.dispatch( updateUsername(this.state.inputValue) );
 
-        // this.setState({
-        //   isLoading: false,
-        //   redirect: true
-        // });
+        this.setState({
+          isLoading: false,
+          redirect: true
+        });
       })
       .catch((error) => {
         console.log(error);
@@ -94,7 +93,7 @@ class Search extends Component {
       match,
       location,
     } = this.props;
-
+    
     const {
       inputValue,
       isLoading,
@@ -139,13 +138,11 @@ class Search extends Component {
   }
 };
 
-export default Search;
+const mapStateToProps = store => ({
+  username: store.usernameState.username
+});
 
-// const mapStateToProps = store => ({
-//   newValue: store.clickState.newValue
-// });
-
-// const mapDispatchToProps = dispatch =>
-//   bindActionCreators({ clickButton }, dispatch);
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ updateUsername }, dispatch);
   
-// export default connect(mapStateToProps, mapDispatchToProps)(Search);
+export default connect(mapStateToProps, mapDispatchToProps)(Search);

@@ -11,10 +11,12 @@ import { Reducers } from './reducers';
 
 class Routes extends Component {
   render() {
-    const Store = createStore(Reducers);
+    const store = createStore(Reducers);
+
+    window.store = store;
 
     return (
-      <Provider store={Store}>
+      <Provider store={store}>
         <Router>
           <Switch>
             <Route exact path="/" component={Search} />

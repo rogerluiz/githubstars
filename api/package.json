@@ -4,7 +4,7 @@
   "description": "stars repositories",
   "main": "index.js",
   "scripts": {
-    "start": "npm run server",
+    "start": "yarn run server",
     "server": "nodemon index.js --exec babel-node",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint './**/*.js'",

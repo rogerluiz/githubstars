@@ -14,10 +14,5 @@ export default (app) => {
 
   app
     .get('/api/tag', repository.tag)
-    .post('/api/tag', (req, res) => {
-      res.send({
-        data: true,
-        statusCode: HttpStatus.OK,
-      });
-    });
+    .post('/api/tag', repository.updateTag);
 };
