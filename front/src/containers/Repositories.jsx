@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import Input from '../components/Input';
 import Header from '../components/Header';
 import Modal from '../components/Modal';
+import { throws } from 'assert';
 
 const Container = styled.div`
   width: 100%;
@@ -96,11 +97,18 @@ const SearchInput = styled(Input)`
 
 class Repositories extends Component {
   state = {
+    tagId: -1,
+    tagKey: 0,
     inputValue: '',
     openModal: false,
-    // username: 'rafaelrinaldi',
     repositories: [],
     headerNames: ['Repository', 'Description', 'Language', 'Tags', ''],
+  }
+
+  constructor(props) {
+    super(props);
+
+    this.searchByTag = this.searchByTag.bind(this);
   }
 
   inputChange = event => {
@@ -109,9 +117,16 @@ class Repositories extends Component {
     });
   }
 
-  onToggleModal = () => {
-    
+  onToggleModal = (event) => {
     this.setState({
+      openModal: !this.state.openModal
+    });
+  }
+
+  onOpenModal(id, k) {
+    this.setState({
+      tagId: id,
+      tagKey: k,
       openModal: !this.state.openModal
     });
   }
@@ -119,11 +134,11 @@ class Repositories extends Component {
   componentWillMount() {
     const options = {
       params: {
-        username: 'rogerluiz', //this.props.username
+        username: this.props.username, //this.props.username
       },
     };
 
-    axios.get('http://localhost:4000/api', options)
+    axios.get('/api', options)
       .then((response) => {
         this.setState({ repositories: response.data.repositories });
       })
@@ -132,13 +147,18 @@ class Repositories extends Component {
       });
   }
 
-  searchByTag() {
+  searchByTag(event) {
+    console.log(event.keyCode)
+    if (event.keyCode !== 13) {
+      return false;
+    }
+
     const options = {
-      username: 'rogerluiz',
+      username: this.props.username,
       search: this.state.inputValue,
     };
 
-    axios.post('http://localhost:4000/api/search', options)
+    axios.post('/api/search', options)
       .then((response) => {
         console.log(response);
       })
@@ -154,6 +174,8 @@ class Repositories extends Component {
     } = this.props;
 
     const {
+      tagId,
+      tagKey,
       inputValue,
       openModal,
       headerNames,
@@ -169,12 +191,12 @@ class Repositories extends Component {
     const BodyItems = repositories.map((item, key) => {
       return (
         <TableRow key={key}>
-          <TableItem>{ item.name }</TableItem>
+          <TableItem><a href={item.url} target="_blank">{ item.name }</a></TableItem>
           <TableItem>{ item.description }</TableItem>
           <TableItem>{ item.language }</TableItem>
           <TableItem>{ item.tags }</TableItem>
           <TableItem>
-            <ButtonLink data-id={item._id} onClick={this.onToggleModal}>editar</ButtonLink>
+            <ButtonLink onClick={() => this.onOpenModal(item._id, key)}>editar</ButtonLink>
           </TableItem>
         </TableRow>
       );
@@ -186,7 +208,7 @@ class Repositories extends Component {
 
         <Content>
           <SearchBar>
-            <SearchInput type='text' onChange={this.inputChange} value={inputValue} placeholder="Search by tag" />
+            <SearchInput type='text' onChange={this.inputChange} value={inputValue} onKeyDown={this.searchByTag} placeholder="Search by tag" />
           </SearchBar>
 
           <Table>
@@ -202,7 +224,7 @@ class Repositories extends Component {
           </Table>
         </Content>
 
-        {openModal ? <Modal onCloseModal={this.onToggleModal} tagId={this.state.tagId} /> : ''}
+        {openModal ? <Modal onCloseModal={this.onToggleModal} tagId={tagId} tagKey={tagKey} /> : ''}
       </Container>
     );
   }

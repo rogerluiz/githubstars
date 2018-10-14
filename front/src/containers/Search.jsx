@@ -9,7 +9,7 @@ import { bindActionCreators } from 'redux';
 import  { updateUsername } from '../actions';
 
 import Input from '../components/Input';
-import Button from '../components/Button';
+// import Button from '../components/Button';
 import ButtonPrimary from '../components/ButtonPrimary';
 import LoaderBar from '../components/LoaderBar';
 import Header from '../components/Header';
@@ -73,7 +73,7 @@ class Search extends Component {
       isLoading: true
     });
 
-    axios.post('http://localhost:4000/api', options)
+    axios.post('/api', options)
       .then((response) => {
         // updateUsername(this.state.inputValue);
         window.store.dispatch( updateUsername(this.state.inputValue) );

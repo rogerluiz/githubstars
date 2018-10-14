@@ -25,13 +25,13 @@ const RepositorySchema = mongoose.Schema({
       },
       tags: {
         type: String,
-        default: ''
+        default: ""
       }
     }
   ]
 });
 
-RepositorySchema.index({ name: "text" });
+RepositorySchema.index({ 'repositories.tags': 'text' });
 
 
 export default mongoose.model('Repository', RepositorySchema);

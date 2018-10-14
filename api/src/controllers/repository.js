@@ -68,27 +68,44 @@ class RepositoryController {
   }
 
   updateTag(req, res, next) {
-    const id = req.body.id;
+    const { id, username, tags } = req.body;
     
     res.status(HttpStatus.OK).json(id);
 
-    // Repository.updateOne({
-    //   name: req.body.username,
-    // }, {
-    //   name: req.query.username,
-    //   repositories: [...data],
-    // })
-    //   .then((result) => {
-    //     res.status(HttpStatus.OK).json(result);
-    //   })
-    //   .catch(e => next(e));
+    Repository.updateOne({
+        name: username,
+        'repositories.id': id
+      }, {
+        $set: {
+          'repositories.$.tags': tags.split(',')
+        }
+      })
+        .then((result) => {
+          res.status(HttpStatus.OK).json(result);
+        })
+        .catch(e => next(e));
   }
 
-  search(req, res, next) {
-    Repository.find({
+  /*
+  Repository.find({
       name: req.body.username,
-      repositories: { $elemMatch: { tag: new RegExp(req.body.search) } },
-    }, { 'repositories.$': 1 })
+      repositories: { $elemMatch: { tags: new RegExp(req.body.search, 'gi') } },
+    }, { 'repositories.$.tags': 1 })
+  Repository.find({
+      name: req.body.username,
+    }, { repositories: { $elemMatch: { tags: new RegExp(req.body.search) } } })
+  */
+
+  search(req, res, next) {
+    Repository.find(
+      {
+        name: 'rogerluiz',
+        'repositories.$.tags': { $regex: /js/ },
+      },
+      {
+        name: 1,
+        'repositories.$.tags': 1,
+      })
       .then(result => res.status(HttpStatus.OK).json(result))
       .catch(e => {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR);

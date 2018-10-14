@@ -12,17 +12,17 @@ const getRepositories = async (id, secret, url) => {
   };
 
   const response = await axios.get(url, options);
-  console.log(response);
 
-  const filtered = response.data.map((item) => (
-    {
-      id: item.repo.id,
+  const filtered = response.data.map((item) => {
+    const newURL = item.repo.git_url.replace('git:', 'https:').replace('.git', '');
+    return {
+      gitId: item.repo.id,
       description: item.repo.description,
-      url: item.repo.git_url,
+      url: newURL,
       language: item.repo.language,
       name: item.repo.name,
     }
-  ));
+  });
 
   return filtered;
 };

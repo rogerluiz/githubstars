@@ -1,4 +1,3 @@
-import HttpStatus from 'http-status';
 import RepositoryController from './controllers/repository';
 
 export default (app) => {
