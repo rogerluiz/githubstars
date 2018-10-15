@@ -109,6 +109,7 @@ class Repositories extends Component {
     super(props);
 
     this.searchByTag = this.searchByTag.bind(this);
+    this.updatePage = this.updatePage.bind(this);
   }
 
   inputChange = event => {
@@ -132,23 +133,10 @@ class Repositories extends Component {
   }
 
   componentWillMount() {
-    const options = {
-      params: {
-        username: this.props.username, //this.props.username
-      },
-    };
-
-    axios.get('/api', options)
-      .then((response) => {
-        this.setState({ repositories: response.data.repositories });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    this.updatePage();
   }
 
   searchByTag(event) {
-    console.log(event.keyCode)
     if (event.keyCode !== 13) {
       return false;
     }
@@ -161,6 +149,28 @@ class Repositories extends Component {
     axios.post('/api/search', options)
       .then((response) => {
         console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  updatePage(res) {
+    if (res !== undefined) {
+      this.setState({
+        openModal: !this.state.openModal
+      });
+    }
+
+    const options = {
+      params: {
+        username: this.props.username,
+      },
+    };
+
+    axios.get('/api', options)
+      .then((response) => {
+        this.setState({ repositories: response.data.repositories });
       })
       .catch((error) => {
         console.log(error);
@@ -224,19 +234,14 @@ class Repositories extends Component {
           </Table>
         </Content>
 
-        {openModal ? <Modal onCloseModal={this.onToggleModal} tagId={tagId} tagKey={tagKey} /> : ''}
+        {openModal ? <Modal onCloseModal={this.onToggleModal} tagId={tagId} tagKey={tagKey} onUpdateResult={this.updatePage} /> : ''}
       </Container>
     );
   }
 };
 
-// export default Search;
-
 const mapStateToProps = state => ({
   username: state.usernameState.username,
 });
-
-// const mapDispatchToProps = dispatch =>
-//   bindActionCreators({ clickButton }, dispatch);
   
 export default connect(mapStateToProps)(Repositories);

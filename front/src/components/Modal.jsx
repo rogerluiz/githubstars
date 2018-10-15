@@ -66,17 +66,29 @@ const InputText = styled(Input)`
 class Modal extends Component {
   constructor(props) {
     super(props);
-
+    this.state = {
+      inputValue: '',
+      username: window.store.getState().usernameState.username
+    };
     this.updateTag =  this.updateTag.bind(this);
   }
+
+  inputChange = event => {
+    this.setState({
+      inputValue: event.target.value
+    });
+  }
+
   updateTag() {
     const options = {
-      id: this.props.id
+      username: this.state.username,
+      id: this.props.tagId,
+      tags: this.state.inputValue
     };
 
-    axios.post('http://localhost:4000/api/tag', options)
+    axios.post('/api/tag', options)
       .then((response) => {
-        console.log(response);
+        this.props.onUpdateResult(response);
       })
       .catch((error) => {
         console.log(error);
@@ -89,7 +101,7 @@ class Modal extends Component {
         <Inner>
           <Column>
             <Label>edit tags for (reponame)</Label>
-            <InputText type="text" />
+            <InputText type='text' onChange={this.inputChange} value={this.state.inputValue} />
           </Column>
           
           <Row>

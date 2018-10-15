@@ -69,15 +69,14 @@ class RepositoryController {
 
   updateTag(req, res, next) {
     const { id, username, tags } = req.body;
-    
-    res.status(HttpStatus.OK).json(id);
+    console.log(id, username, tags );
 
     Repository.updateOne({
         name: username,
-        'repositories.id': id
+        'repositories._id': id
       }, {
         $set: {
-          'repositories.$.tags': tags.split(',')
+          'repositories.$.tags': tags
         }
       })
         .then((result) => {
@@ -86,26 +85,10 @@ class RepositoryController {
         .catch(e => next(e));
   }
 
-  /*
-  Repository.find({
-      name: req.body.username,
-      repositories: { $elemMatch: { tags: new RegExp(req.body.search, 'gi') } },
-    }, { 'repositories.$.tags': 1 })
-  Repository.find({
-      name: req.body.username,
-    }, { repositories: { $elemMatch: { tags: new RegExp(req.body.search) } } })
-  */
-
   search(req, res, next) {
     Repository.find(
-      {
-        name: 'rogerluiz',
-        'repositories.$.tags': { $regex: /js/ },
-      },
-      {
-        name: 1,
-        'repositories.$.tags': 1,
-      })
+      { name: req.body.username, 'repositories.tags': req.body.search },
+      { name: 1, 'repositories.$.tags': 1 })
       .then(result => res.status(HttpStatus.OK).json(result))
       .catch(e => {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR);
