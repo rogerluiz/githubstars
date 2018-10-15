@@ -148,7 +148,8 @@ class Repositories extends Component {
 
     axios.post('/api/search', options)
       .then((response) => {
-        console.log(response);
+        console.log(response.data[0])
+        this.setState({ repositories: response.data[0].repositories });
       })
       .catch((error) => {
         console.log(error);
@@ -176,7 +177,6 @@ class Repositories extends Component {
         console.log(error);
       });
   }
-
   render() {
     const {
       match,

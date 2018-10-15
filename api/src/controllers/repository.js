@@ -1,7 +1,5 @@
 import dotenv from 'dotenv';
 import HttpStatus from 'http-status';
-import mongoose from 'mongoose';
-// import { ObjectId } from 'mongo';
 
 import Repository from '../models/repository';
 import { getRepositories } from '../helpers/helper';
@@ -69,7 +67,6 @@ class RepositoryController {
 
   updateTag(req, res, next) {
     const { id, username, tags } = req.body;
-    console.log(id, username, tags );
 
     Repository.updateOne({
         name: username,
@@ -86,10 +83,19 @@ class RepositoryController {
   }
 
   search(req, res, next) {
-    Repository.find(
-      { name: req.body.username, 'repositories.tags': req.body.search },
-      { name: 1, 'repositories.$.tags': 1 })
-      .then(result => res.status(HttpStatus.OK).json(result))
+    Repository.find({ name: req.body.username })
+      .then(result => {
+        let newResult = [...result];
+        const filtered = newResult[0].repositories.filter((el) => {
+          if (el.tags.match(new RegExp(req.body.search)) !== null) {
+            return  el;
+          }
+        });
+        
+        newResult[0].repositories = filtered;
+
+        res.status(HttpStatus.OK).json(newResult);
+      })
       .catch(e => {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR);
         next(e);
