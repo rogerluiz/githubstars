@@ -2,6 +2,14 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import Button from './Button';
 
+class ButtonPrimary extends Component {
+  render() {
+    return (
+      <Btn {...this.props}>{ this.props.children }</Btn>
+    );
+  }
+};
+
 const Btn = styled(Button)`
   color: rgb(255, 255, 255);
   background-color: rgb(40, 167, 69);
@@ -14,13 +22,5 @@ const Btn = styled(Button)`
     border-color: rgba(27, 31, 35, 0.5);
   }
 `;
-
-class ButtonPrimary extends Component {
-  render() {
-    return (
-      <Btn {...this.props}>{ this.props.children }</Btn>
-    );
-  }
-};
 
 export default ButtonPrimary;

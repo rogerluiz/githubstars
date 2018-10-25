@@ -6,6 +6,59 @@ import Input from './Input';
 import Button from './Button';
 import ButtonDanger from './ButtonDanger';
 
+class Modal extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      inputValue: '',
+      username: window.store.getState().usernameState.username
+    };
+    this.updateTag =  this.updateTag.bind(this);
+  }
+
+  inputChange = event => {
+    this.setState({
+      inputValue: event.target.value
+    });
+  }
+
+  updateTag() {
+    const options = {
+      username: this.state.username,
+      id: this.props.tagId,
+      tags: this.state.inputValue
+    };
+
+    axios.post('/api/tag', options)
+      .then((response) => {
+        this.props.onUpdateResult(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  render() {
+    return (
+      <Container>
+        <Inner>
+          <Column>
+            <Label>edit tags for (reponame)</Label>
+            <InputText type='text' onChange={this.inputChange} value={this.state.inputValue} />
+          </Column>
+          
+          <Row>
+            <Button onClick={this.updateTag}>Save</Button>
+            <ButtonDanger onClick={this.props.onCloseModal}>Cancel</ButtonDanger>
+          </Row>
+        </Inner>
+
+        <Overlay onClick={this.props.onCloseModal}></Overlay>
+      </Container>
+    );
+  }
+};
+
 const Container = styled.div`
   top: 0;
   left: 0;
@@ -63,57 +116,5 @@ const InputText = styled(Input)`
   width: 100%;
 `;
 
-class Modal extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      inputValue: '',
-      username: window.store.getState().usernameState.username
-    };
-    this.updateTag =  this.updateTag.bind(this);
-  }
-
-  inputChange = event => {
-    this.setState({
-      inputValue: event.target.value
-    });
-  }
-
-  updateTag() {
-    const options = {
-      username: this.state.username,
-      id: this.props.tagId,
-      tags: this.state.inputValue
-    };
-
-    axios.post('/api/tag', options)
-      .then((response) => {
-        this.props.onUpdateResult(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-
-  render() {
-    return (
-      <Container>
-        <Inner>
-          <Column>
-            <Label>edit tags for (reponame)</Label>
-            <InputText type='text' onChange={this.inputChange} value={this.state.inputValue} />
-          </Column>
-          
-          <Row>
-            <Button onClick={this.updateTag}>Save</Button>
-            <ButtonDanger onClick={this.props.onCloseModal}>Cancel</ButtonDanger>
-          </Row>
-        </Inner>
-
-        <Overlay onClick={this.props.onCloseModal}></Overlay>
-      </Container>
-    );
-  }
-};
 
 export default Modal;

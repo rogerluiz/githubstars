@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
@@ -15,7 +16,7 @@ class Routes extends Component {
     const persistedState = loadState();
     const store = createStore(Reducers, persistedState);
 
-    window.store = store;
+    // window.store = store;
 
     store.subscribe(() => {
       saveState(store.getState());
@@ -34,5 +35,7 @@ class Routes extends Component {
     );
   }
 }
+
+
 
 export default Routes;

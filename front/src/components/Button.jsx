@@ -24,7 +24,7 @@ const Btn = styled.button`
   border-image: initial;
   border-radius: 0.25em;
   color: rgb(36, 41, 46);
-  background-color: rgb(239, 243, 246);
+  background-color: rgb(239, 243, s246);
   background-image: linear-gradient(-180deg, rgb(250, 251, 252) 0%, rgb(239, 243, 246) 90%);
 
   &:hover {

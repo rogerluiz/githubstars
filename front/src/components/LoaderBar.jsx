@@ -1,6 +1,16 @@
 import React, { Component } from 'react';
 import styled, { keyframes } from 'styled-components';
 
+class LoaderBar extends Component {
+  render() {
+    return (
+      <Container>
+        <Span />
+      </Container>
+    );
+  }
+};
+
 
 const move = keyframes`
   0% {
@@ -37,16 +47,5 @@ const Span = styled.span`
 	overflow: hidden;
 	box-shadow: inset 0 10px 0 rgba(255,255,255,.2);
 `;
-
-class LoaderBar extends Component {
-  render() {
-    return (
-      <Container>
-        <Span />
-      </Container>
-    );
-  }
-};
-
   
 export default LoaderBar;

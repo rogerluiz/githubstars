@@ -1,7 +1,9 @@
 // import { clickReducer } from './clickReducer';
-import { usernameReducer } from './repositoriesReducer';
 import { combineReducers } from 'redux';
+import {
+  repositoriesReducer
+} from './repositoriesReducer';
 
 export const Reducers = combineReducers({
-  usernameState: usernameReducer,
+  repositoriesState: repositoriesReducer
 });

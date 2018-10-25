@@ -1,15 +1,169 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
 import axios from 'axios';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import styled from 'styled-components';
+import PropTypes from 'prop-types';
 // import { bindActionCreators } from 'redux';
 
-// import  { clickButton } from '../actions';
+import  { updateRepositories, openModal } from '../actions';
 
 import Input from '../components/Input';
 import Header from '../components/Header';
 import Modal from '../components/Modal';
-import { throws } from 'assert';
+// import { throws } from 'assert';
+
+class Repositories extends Component {
+  state = {
+    tagId: -1,
+    tagKey: 0,
+    inputValue: '',
+    openModal: false,
+    repositories: [],
+  }
+
+  constructor(props) {
+    super(props);
+
+    console.log(props)
+
+    this.searchByTag = this.searchByTag.bind(this);
+    this.updatePage = this.updatePage.bind(this);
+  }
+
+  inputChange = event => {
+    this.setState({
+      inputValue: event.target.value
+    });
+  }
+
+  onToggleModal = (event) => {
+    this.setState({ openModal: !this.state.openModal });
+  }
+
+  onOpenModal(id, k) {
+    this.setState({
+      openModal: !this.state.openModal
+    });
+
+    this.context.store.dispatch(openModal({ id: id, key: k }));
+  }
+
+  componentWillMount() {
+    this.updatePage();
+  }
+
+  searchByTag(event) {
+    if (event.keyCode !== 13) {
+      return false;
+    }
+
+    const options = {
+      username: this.props.username,
+      search: this.state.inputValue,
+    };
+
+    axios.post('/api/search', options)
+      .then((response) => {
+        this.setState({ repositories: response.data[0].repositories });
+        
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  updatePage(res) {
+    if (res !== undefined) {
+      this.setState({
+        openModal: !this.state.openModal
+      });
+    }
+
+    const options = {
+      params: {
+        username: this.props.username,
+      },
+    };
+
+    axios.get('/api', options)
+      .then((response) => {
+        this.setState({ repositories: response.data.repositories });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+  render() {
+    const {
+      match,
+      location
+    } = this.props;
+
+    const {
+      tagId,
+      tagKey,
+      inputValue,
+      openModal,
+      repositories,
+    } = this.state;
+    const headerNames = ['Repository', 'Description', 'Language', 'Tags', ''];
+    const HeaderItems = headerNames.map((item, key) => {
+      return (
+        <TableHeadItem key={key}>{item}</TableHeadItem>
+      );
+    });
+
+    const BodyItems = repositories.map((item, key) => {
+      return (
+        <TableRow key={key}>
+          <TableItem><a href={item.url} target="_blank">{ item.name }</a></TableItem>
+          <TableItem>{ item.description }</TableItem>
+          <TableItem>{ item.language }</TableItem>
+          <TableItem>{ item.tags }</TableItem>
+          <TableItem>
+            <ButtonLink onClick={() => this.onOpenModal(item._id, key)}>editar</ButtonLink>
+          </TableItem>
+        </TableRow>
+      );
+    });
+
+    return (
+      <Container>
+        <Header match={match} location={location} />
+
+        <Content>
+          <SearchBar>
+            <SearchInput type='text' onChange={this.inputChange} value={inputValue} onKeyDown={this.searchByTag} placeholder="Search by tag" />
+          </SearchBar>
+
+          <Table>
+            <TableHead>
+              <TableRow>
+                {HeaderItems}
+              </TableRow>
+            </TableHead>
+
+            <tbody>
+              { BodyItems }
+            </tbody>
+          </Table>
+        </Content>
+
+        {openModal ? <Modal onCloseModal={this.onToggleModal} tagId={tagId} tagKey={tagKey} onUpdateResult={this.updatePage} /> : ''}
+      </Container>
+    );
+  }
+};
+
+Repositories.contextTypes = { store: PropTypes.object };
+
+const mapStateToProps = store => ({
+  username: store.repositoriesState.username,
+  modal: store.repositoriesState.modal,
+});
+
+
+// STYLES
 
 const Container = styled.div`
   width: 100%;
@@ -27,8 +181,6 @@ const Content = styled.div`
 
 const SearchBar = styled.div`
   width: 300px;
-
-
 `;
 
 const Table = styled.table`
@@ -95,153 +247,5 @@ const SearchInput = styled(Input)`
    width: 100%;
 `;
 
-class Repositories extends Component {
-  state = {
-    tagId: -1,
-    tagKey: 0,
-    inputValue: '',
-    openModal: false,
-    repositories: [],
-    headerNames: ['Repository', 'Description', 'Language', 'Tags', ''],
-  }
 
-  constructor(props) {
-    super(props);
-
-    this.searchByTag = this.searchByTag.bind(this);
-    this.updatePage = this.updatePage.bind(this);
-  }
-
-  inputChange = event => {
-    this.setState({
-      inputValue: event.target.value
-    });
-  }
-
-  onToggleModal = (event) => {
-    this.setState({
-      openModal: !this.state.openModal
-    });
-  }
-
-  onOpenModal(id, k) {
-    this.setState({
-      tagId: id,
-      tagKey: k,
-      openModal: !this.state.openModal
-    });
-  }
-
-  componentWillMount() {
-    this.updatePage();
-  }
-
-  searchByTag(event) {
-    if (event.keyCode !== 13) {
-      return false;
-    }
-
-    const options = {
-      username: this.props.username,
-      search: this.state.inputValue,
-    };
-
-    axios.post('/api/search', options)
-      .then((response) => {
-        console.log(response.data[0])
-        this.setState({ repositories: response.data[0].repositories });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-
-  updatePage(res) {
-    if (res !== undefined) {
-      this.setState({
-        openModal: !this.state.openModal
-      });
-    }
-
-    const options = {
-      params: {
-        username: this.props.username,
-      },
-    };
-
-    axios.get('/api', options)
-      .then((response) => {
-        this.setState({ repositories: response.data.repositories });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-  render() {
-    const {
-      match,
-      location
-    } = this.props;
-
-    const {
-      tagId,
-      tagKey,
-      inputValue,
-      openModal,
-      headerNames,
-      repositories,
-    } = this.state;
-    
-    const HeaderItems = headerNames.map((item, key) => {
-      return (
-        <TableHeadItem key={key}>{item}</TableHeadItem>
-      );
-    });
-
-    const BodyItems = repositories.map((item, key) => {
-      return (
-        <TableRow key={key}>
-          <TableItem><a href={item.url} target="_blank">{ item.name }</a></TableItem>
-          <TableItem>{ item.description }</TableItem>
-          <TableItem>{ item.language }</TableItem>
-          <TableItem>{ item.tags }</TableItem>
-          <TableItem>
-            <ButtonLink onClick={() => this.onOpenModal(item._id, key)}>editar</ButtonLink>
-          </TableItem>
-        </TableRow>
-      );
-    });
-
-    return (
-      <Container>
-        <Header match={match} location={location} />
-
-        <Content>
-          <SearchBar>
-            <SearchInput type='text' onChange={this.inputChange} value={inputValue} onKeyDown={this.searchByTag} placeholder="Search by tag" />
-          </SearchBar>
-
-          <Table>
-            <TableHead>
-              <TableRow>
-                {HeaderItems}
-              </TableRow>
-            </TableHead>
-
-            <tbody>
-              { BodyItems }
-            </tbody>
-          </Table>
-        </Content>
-
-        {openModal ? <Modal onCloseModal={this.onToggleModal} tagId={tagId} tagKey={tagKey} onUpdateResult={this.updatePage} /> : ''}
-      </Container>
-    );
-  }
-};
-
-const mapStateToProps = state => ({
-  username: state.usernameState.username,
-});
-  
 export default connect(mapStateToProps)(Repositories);
